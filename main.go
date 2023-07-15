@@ -1,0 +1,37 @@
+package main
+
+import(
+	"os"
+	"example/RestaurantProject/database"
+	"example/RestaurantProject/routes"
+	"example/RestaurantProject/middleware"
+	"go.mongodb.org/mongo-driver/mongo"
+	"github.com/gin-gonic/gin"
+)
+
+var foodCollection *mongo.Collection = database.OpenCollection(database.Client,"food")  /// this will creare database for me 
+//If a collection does not exist, MongoDB creates the collection when you first store data for that collection
+
+func main()  {
+	
+	port := os.Getenv("PORT")
+	if port == ""{
+		port = "8000"
+	}
+
+	router := gin.New()
+	router.Use(gin.Logger())
+	routes.UserRoutes(router)
+	router.Use(middleware.Authentication())
+
+
+	routes.FoodRoutes(router)
+	routes.MenuRoutes(router)
+	routes.OrderRoutes(router)
+	routes.orderItemRoutes(router)
+	routes.InvoiceRoutes(router)
+	routes.TableRoutes(router)
+
+	router.Run(":" + port)
+
+}
