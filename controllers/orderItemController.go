@@ -90,10 +90,6 @@ func GetOrderItemsByOrder() gin.HandlerFunc {
 	}
 }
 
-func ItemsByOrder(id string) (OrderItems []primitive.M, err error) {
-
-}
-
 func CreateOrderItems() gin.HandlerFunc {
 
 	return func(c *gin.Context) {
@@ -222,3 +218,49 @@ func UpdateOrderItem() gin.HandlerFunc {
 //primitive
 // M is an unordered representation of a BSON document.
 //This type should be used when the order of the elements does not matter
+
+// order -> has multiple -> orderItems and -> every OrderItem has food -> Food
+
+func ItemsByOrder(id string) (OrderItems []primitive.M, err error) {
+
+	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+
+	matchStage := bson.D{{"$match", bson.D{{"order_id", id}}}}                                                                               // gives all the orderItems of that particular order_id
+	lookupFoodStage := bson.D{{"$lookup", bson.D{{"from", "food"}, {"localField", "food_id"}, {"foreignField", "food_id"}, {"as", "food"}}}} // lookup on food data of matched OrderItems
+
+	//$lookup is tool to used for looking up other collection in database via foreignKey we have in our collection
+	//let say orderItem want to lookup data of Food using food_id store in both ;
+	// localField : in orderItem data  {food_id}
+	// ForeignField : in Food data     {food_id}
+
+	unwindFoodStage := bson.D{{"$unwind", bson.D{{"path", "$food"}, {"preserveNullAndEmptyArrays", true}}}}
+	//unwindStage used to unwind array that we got from lookupStage so that we can  access & perform more actions on it
+	//path is the field which we want to unwind
+	//preserveNullAndEmptyArrays : to preserve all the fields that are empty or null in array
+
+	lookupOrderStage := bson.D{{"$lookup", bson.D{{"from", "order"}, {"locakField", "order_id"}, {"foreignField", "order_id"}, {"as", "order"}}}}
+	unwindOrderStage := bson.D{{"$unwind", bson.D{{"path", "$order"}, {"preserveNullAndEmptyArrays", true}}}}
+
+	lookupTableStage := bson.D{{"$lookup", bson.D{{"from", "table"}, {"localField", "order.table_id"}, {"foreignField", "table_id"}, {"as", "table"}}}}
+	unwindTableStage := bson.D{{"$unwind", bson.D{{"path", "$table"}, {"preserveNullAndEmptyArrays", true}}}}
+
+	//used to controll which data whill go ahead and which are not
+	projectStage := bson.D{
+
+		{
+			"$project", bson.D{
+				{"id", 0},
+				{"amount", "$food.price"},
+				{"total_count", 1},
+				{"food_name", "$food.name"},
+				{"food_image", "$food.food_image"},
+				{"table_number", "$table.table_number"},
+				{"table_id", "$table.table_id"},
+				{"order_id", "$order.order_id"},
+				{"price", "$food.price"},
+				{"quantity", 1},
+			}}}
+
+	//grouping data
+	groupStage := bson.D{{"$group", bson.D{{"_id", bson.D{{"order_id", "$order_id"}, {"table_id", "$table_id"}, {"table_number", "$table_number"}}}, {"payment_due", bson.D{{"$sum", "$amount"}}}, {"total_count", bson.D{{"$sum", 1}}}, {"order_items", bson.D{{"$push", "$$ROOT"}}}}}}
+}
