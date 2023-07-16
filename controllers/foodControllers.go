@@ -5,7 +5,9 @@ import (
 	"example/RestaurantProject/database"
 	"example/RestaurantProject/models"
 	"fmt"
+	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -26,6 +28,63 @@ var validate = validator.New()
 func GetFoods() gin.HandlerFunc {
 
 	return func(c *gin.Context) {
+
+		ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
+
+		recordPerPage, err := strconv.Atoi(c.Query("recordPerPage")) // to limit the sending data to frontEnd max recordPerPage set to be 10
+		if err != nil || recordPerPage < 1 {
+			recordPerPage = 10 // default limit
+		}
+
+		page, err := strconv.Atoi(c.Query("page")) // getting  query parameter keyed with "page"
+		if err != nil || page < 1 {
+			page = 1 // default limit
+		}
+
+		startIndex := (page - 1) * recordPerPage // where to start from
+		startIndex, err = strconv.Atoi(c.Query("startIndex"))
+
+		//aggregation pipeline stage and operator : mongodb-topic
+
+		// will fo to databse and try to match with data
+		matchStage := bson.D{{Key: "$match", Value: bson.D{{}}}} // match using notthing
+
+		// will group all the records by group by name , in group stage on counting data our data get lost for that we create $data
+		groupStage := bson.D{{Key: "$group", Value: bson.D{{Key: "_id", Value: bson.D{{Key: "_id", Value: "null"}}}, {Key: "total_count", Value: bson.D{{"$sum ,1"}}}, {Key: "data", Value: bson.D{{Key: "$push", Value: "$$ROOT"}}}}}}
+
+		// Reshapes a document stream by renaming, adding, or removing fields.
+		projectStage := bson.D{
+			{
+				Key: "$project", Value: bson.D{
+					{Key: "_id", Value: 0},         // "0" means this field won't go to frontEnd
+					{Key: "total_count", Value: 1}, // "1" means this field can  go to frontEnd
+					{Key: "food_item", Value: bson.D{{Key: "$slice", Value: []interface{}{"$data", startIndex, recordPerPage}}}}, // now we get above data here as &data
+					// $slice will controlls number of elements to return
+					//startIndex : where to start from
+					// recordPerPage : how many pages do you want to sent
+				},
+			},
+		}
+
+		// oerder of stages  is  important here
+		result, err := foodCollection.Aggregate(ctx, mongo.Pipeline{
+			matchStage,
+			groupStage,
+			projectStage,
+		})
+
+		defer cancel()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "error occuered while listing food item"})
+		}
+
+		//
+		var allFoods []bson.M
+		if err = result.All(ctx, &allFoods); err != nil {
+			log.Fatal(err)
+		}
+
+		c.JSON(http.StatusOK, allFoods[0])
 
 	}
 
@@ -115,3 +174,13 @@ func round(num float64) int {
 func toFixed(num float64, precision int) float64 {
 
 }
+
+/**
+Query returns the keyed url query value if it exists, otherwise it returns an empty string `("")`. It is shortcut for `c.Request.URL.Query().Get(key)`
+
+    GET /path?id=1234&name=Manu&value=
+       c.Query("id") == "1234"
+       c.Query("name") == "Manu"
+       c.Query("value") == ""
+       c.Query("wtf") == ""
+*/
