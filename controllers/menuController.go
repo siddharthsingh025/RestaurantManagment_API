@@ -46,7 +46,7 @@ func GetMenu() gin.HandlerFunc {
 		menuId := c.Param("menu_id")
 		var menu models.Menu
 
-		err := menuCollection.FindOne(ctx, bson.M{"menu_id": menuId}).Decode(&menu)
+		err := menuCollection.FindOne(ctx, bson.M{"menu_id": menuId}).Decode(&menu) 
 		//here we call findOne function that will find menu with id "menuId" and after getting it we cast it into "&menu" - MenuModel
 		defer cancel()
 		if err != nil {

@@ -6,6 +6,7 @@ import (
 	"example/RestaurantProject/models"
 	"fmt"
 	"log"
+	"math"
 	"net/http"
 	"strconv"
 	"time"
@@ -15,6 +16,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // mongodb "food" collection instance
@@ -163,16 +165,84 @@ func CreateFoods() gin.HandlerFunc {
 func UpdateFood() gin.HandlerFunc {
 
 	return func(c *gin.Context) {
+		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+		var menu models.Menu
+		var food models.Food
+
+		foodId := c.Param("food_id")
+
+		//binding/cast recieved  json data with food model
+		if err := c.BindJSON(&food); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		var updateObj primitive.D
+
+		if food.Name != nil {
+			updateObj = append(updateObj, bson.E{Key: "name", Value: food.Name})
+		}
+
+		if food.Price != nil {
+			updateObj = append(updateObj, bson.E{Key: "price", Value: food.Price})
+		}
+
+		if food.Food_image != nil {
+			updateObj = append(updateObj, bson.E{Key: "food_image", Value: food.Food_image})
+
+		}
+
+		if food.Menu_id != nil {
+			err := menuCollection.FindOne(ctx, bson.M{"menu_id": food.Menu_id}).Decode(&menu)
+			defer cancel()
+			if err != nil {
+				msg := fmt.Sprint("message: Menu was not found")
+				c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
+				return
+			}
+			updateObj = append(updateObj, bson.E{Key: "menu_id", Value: food.Menu_id}) // doubt
+		}
+
+		food.Updated_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+		updateObj = append(updateObj, bson.E{Key: "updated_at", Value: food.Updated_at})
+
+		upsert := true
+
+		filter := bson.M{"food_id": foodId}
+
+		opt := options.UpdateOptions{
+			Upsert: &upsert,
+		}
+
+		result, err := foodCollection.UpdateOne(
+			ctx,
+			filter,
+			bson.D{
+				{"$set", updateObj},
+			},
+			&opt,
+		)
+
+		if err != nil {
+			msg := fmt.Sprint("food item update failed")
+			c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
+			return
+		}
+
+		c.JSON(http.StatusOK, result)
 
 	}
 }
 
 func round(num float64) int {
 
+	return int(num + math.Copysign(0.5, num))
+
 }
 
 func toFixed(num float64, precision int) float64 {
-
+	output := math.Pow(10, float64(precision))
+	return float64(round(num*output)) / output
 }
 
 /**
