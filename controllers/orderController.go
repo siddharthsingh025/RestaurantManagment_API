@@ -18,7 +18,6 @@ import (
 
 // mongodb "order" collection instance
 var orderCollection *mongo.Collection = database.OpenCollection(database.Client, "order")
-var tableCollection *mongo.Collection = database.OpenCollection(database.Client, "table")
 
 func GetOrders() gin.HandlerFunc {
 
@@ -30,11 +29,13 @@ func GetOrders() gin.HandlerFunc {
 		defer cancel()
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "error occured while listing order items"})
+			return
 		}
 
 		var allOrders []bson.M
 		if err = result.All(ctx, &allOrders); err != nil {
 			log.Fatal(err)
+			return
 		}
 
 		c.JSON(http.StatusOK, allOrders)
@@ -54,6 +55,7 @@ func GetOrder() gin.HandlerFunc {
 		defer cancel()
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "error occured while fetching orders"})
+			return
 		}
 		//return back to user with status code 200
 		c.JSON(http.StatusOK, order)
