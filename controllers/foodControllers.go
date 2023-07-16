@@ -127,7 +127,7 @@ func CreateFoods() gin.HandlerFunc {
 		//it uses tag we provide in our models to validate data { validator pkg}
 		validationErr := validate.Struct(food)
 		if validationErr != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": validationErr.Error()})
+			c.JSON(http.StatusBadRequest, gin.H{"error1": validationErr.Error()})
 			return
 		}
 		//checking where the user sent food is present in our menu or not
