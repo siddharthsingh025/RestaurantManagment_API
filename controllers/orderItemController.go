@@ -263,4 +263,41 @@ func ItemsByOrder(id string) (OrderItems []primitive.M, err error) {
 
 	//grouping data
 	groupStage := bson.D{{"$group", bson.D{{"_id", bson.D{{"order_id", "$order_id"}, {"table_id", "$table_id"}, {"table_number", "$table_number"}}}, {"payment_due", bson.D{{"$sum", "$amount"}}}, {"total_count", bson.D{{"$sum", 1}}}, {"order_items", bson.D{{"$push", "$$ROOT"}}}}}}
+
+	projectStage2 := bson.D{
+		{
+			"$project", bson.D{
+				{"id", 0},
+				{"payment_due", 1},
+				{"table_count", 1},
+				{"table_number", "$_id.table_number"},
+				{"order_items", 1},
+			}}}
+
+	// order is mendatory and very important as we know its a pipe line so output from first stage is used in next and things are hase be to done in same order
+	result, err := orderItemCollection.Aggregate(ctx, mongo.Pipeline{
+		matchStage,
+		lookupFoodStage,
+		unwindFoodStage,
+		lookupOrderStage,
+		unwindOrderStage,
+		lookupTableStage,
+		unwindTableStage,
+		projectStage,
+		groupStage,
+		projectStage2,
+	})
+
+	if err != nil {
+		panic(err)
+	}
+
+	if err := result.All(ctx, &OrderItems); err != nil {
+		panic(err)
+	}
+
+	defer cancel()
+
+	return OrderItems, err
+
 }
