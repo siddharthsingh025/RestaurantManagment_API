@@ -52,7 +52,7 @@ func GetFoods() gin.HandlerFunc {
 		matchStage := bson.D{{Key: "$match", Value: bson.D{{}}}} // match using notthing
 
 		// will group all the records by group by name , in group stage on counting data our data get lost for that we create $data
-		groupStage := bson.D{{Key: "$group", Value: bson.D{{Key: "_id", Value: bson.D{{Key: "_id", Value: "null"}}}, {Key: "total_count", Value: bson.D{{"$sum ,1"}}}, {Key: "data", Value: bson.D{{Key: "$push", Value: "$$ROOT"}}}}}}
+		groupStage := bson.D{{Key: "$group", Value: bson.D{{Key: "_id", Value: bson.D{{Key: "_id", Value: "null"}}}, {Key: "total_count", Value: bson.D{{Key: "$sum ,1"}}}, {Key: "data", Value: bson.D{{Key: "$push", Value: "$$ROOT"}}}}}}
 
 		// Reshapes a document stream by renaming, adding, or removing fields.
 		projectStage := bson.D{
