@@ -43,7 +43,7 @@ func GetFood() gin.HandlerFunc {
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "error occured while fetching food from databse"})
 		}
-
+		//return back to user with status code 200
 		c.JSON(http.StatusOK, food)
 
 	}
@@ -79,13 +79,15 @@ func CreateFoods() gin.HandlerFunc {
 			return
 		}
 
-		food.Created_at, _ = time.Parse(time.RFC3339, time.Now()).Format(time.RFC3339)
-		food.Updated_at, _ = time.Parse(time.RFC3339, time.Now()).Format(time.RFC3339)
+		//timeStamps
+		menu.Created_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+		menu.Updated_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 		food.ID = primitive.NewObjectID()
 		food.Food_id = food.ID.Hex()
 		var num = toFixed(*food.Price, 2)
 		food.Price = &num
 
+		//inserting into database
 		result, insertErr := foodCollection.InsertOne(ctx, food)
 		if insertErr != nil {
 			msg := fmt.Sprintf("food item was not created")
@@ -94,7 +96,7 @@ func CreateFoods() gin.HandlerFunc {
 
 		}
 		defer cancel()
-
+		//return back to user with status code 200
 		c.JSON(http.StatusOK, result)
 	}
 }

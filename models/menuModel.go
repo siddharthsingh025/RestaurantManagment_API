@@ -16,5 +16,3 @@ type Menu struct {
 	Updated_at time.Time          `json:"updated_at"`
 	Menu_id    string             `json:"food_id"` // this will store in adress in foodModel as menu_id
 }
-
-
