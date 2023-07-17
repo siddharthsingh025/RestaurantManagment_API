@@ -71,9 +71,6 @@
        4. docker compose up go-app         //running our restaurantManagment server at post 8000 {go-app}
        5. docker ps -a                     // you can check weather both services are running or not as container
 
-## you can dowload my project images 
-[ docker iamge link]()
-
 
  ## docker compose building output  
 
