@@ -40,7 +40,23 @@
     - DataBase used : MongoDb - noSQL database 
     - Authentication :JWT
     - Testing : PostMan
-    
+
+# Testing
+      
+      ## using docker compose 
+      
+                  1.docker compose up -d mongo-db     //running mongo-db with port 27017
+                  2. docker ps -a                     //check weather container is running or not
+                  3. docker compose build             // building our go-app - it will use our Dockerfile for it
+                  4. docker compose up go-app         //running our restaurantManagment server at post 8000 {go-app}
+                  5. docker ps -a                     // you can check weather both services are running or not as container
+
+      
+
+     ## docker compose building output  
+
+
+     
  <img width="367" alt="Screenshot 2023-07-17 at 1 09 59 AM" src="https://github.com/siddharthsingh025/RestaurantManagment_API/assets/87073574/5d585372-3408-4b2d-8474-cf63fc3c193b">
 
 # OutPut ScreenShorts :
@@ -53,6 +69,7 @@
 <img width="1226" alt="Screenshot 2023-07-17 at 2 00 52 AM" src="https://github.com/siddharthsingh025/RestaurantManagment_API/assets/87073574/ef81c1c6-456f-414a-bd69-8cdb1406d4e8">
 <img width="1238" alt="Screenshot 2023-07-17 at 2 00 45 AM" src="https://github.com/siddharthsingh025/RestaurantManagment_API/assets/87073574/6041c281-c96e-40aa-888f-a64f07da16c6">
 <img width="1229" alt="Screenshot 2023-07-17 at 2 00 38 AM" src="https://github.com/siddharthsingh025/RestaurantManagment_API/assets/87073574/bdcbe711-5ce8-42c5-b2a5-c1aa4e2c779e">
+
 
 
 

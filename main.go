@@ -15,6 +15,10 @@ var foodCollection *mongo.Collection = database.OpenCollection(database.Client, 
 
 func main() {
 
+	// //set database url 
+	// dburl := os. Getenv ("DATABASE_URL")
+	// database.SetUrl(dburl)
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8000"

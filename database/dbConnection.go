@@ -5,14 +5,27 @@ import (
 	"fmt"
 	"log"
 	"time"
+	"os"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// mongodb://YOUR_USERNAME_HERE:YOUR_PASSWORD_HERE@0.0.0.0:YOUR_LOCALHOST_PORT_HERE/
+// my mongodb  cluster url :mongodb+srv://siddharthsingh25102001:5Lc6HWebOZ5Of6a8@cluster0.hd8ampj.mongodb.net/?retryWrites=true&w=majority
+
+// var url string = ""
+// func SetUrl(link string) {
+// 	url = link 
+// }
+
 func DBinstance() *mongo.Client {
 
-	MongoDb_url := "mongodb+srv://siddharthsingh25102001:5Lc6HWebOZ5Of6a8@cluster0.hd8ampj.mongodb.net/?retryWrites=true&w=majority"
+	MongoDb_url := os. Getenv ("DATABASE_URL")
+		if MongoDb_url ==""{
+			log.Fatal("databse url invalid")
+			MongoDb_url = "mongodb+srv://siddharthsingh25102001:5Lc6HWebOZ5Of6a8@cluster0.hd8ampj.mongodb.net/?retryWrites=true&w=majority"
+		}
 	fmt.Print(MongoDb_url)
 
 	client, err := mongo.NewClient(options.Client().ApplyURI(MongoDb_url))
