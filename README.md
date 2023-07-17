@@ -91,6 +91,44 @@
      
  <img width="367" alt="Screenshot 2023-07-17 at 1 09 59 AM" src="https://github.com/siddharthsingh025/RestaurantManagment_API/assets/87073574/5d585372-3408-4b2d-8474-cf63fc3c193b">
 
+
+# msg 📮
+
+ ## This project is designed to provide a beginner-friendly introduction to building RESTful microservices in Golang using the Gin framework. It covers essential aspects such as database management, authentication, testing, and deployment.
+
+### RESTful Architecture 🌟 : 
+            
+      Following industry best practices for building scalable and maintainable microservices.
+      
+### Golang and Gin Framework 🌟:
+                        
+      Utilizing the efficiency, performance, and flexibility of Golang and the Gin framework for developing high-performance APIs.
+      
+### MongoDB - NoSQL Database 🌟:
+            
+      Leveraging MongoDB as the database of choice to store and manage restaurant-related data, providing flexibility and scalability.
+      
+### Authentication with JWT 🌟:
+
+      Implementing JSON Web Token (JWT) for secure and efficient authentication and authorization.
+      
+### Testing with Postman and TablePlus 🌟: 
+
+      Employing Postman 📮 for API testing and TablePlus for convenient database management during the development process.
+      
+ ### Deployment with Docker Compose 🌟:
+       
+       Utilizing Docker 🐳 Compose for easy and consistent deployment, enabling the microservice to be deployed on any cloud provider.
+       
+
+This project has been an incredible opportunity to enhance my skills in Golang, the Gin framework, and microservice architecture. It has also allowed me to gain expertise in MongoDB, JWT authentication, and Docker  🐳 deployment.
+ 
+If you would like to learn more about this RESTful microservice for restaurant management or discuss potential collaboration 🤝 opportunities, I would be delighted to connect with you. Please feel free to reach out to me via LinkedIn or at "siddharthsingh25102001@gmail.com" ✉️
+
+I would like to take a moment to express my heartfelt gratitude to @Akhil Sharma for his exceptional guidance and expertise in explaining the intricacies of Golang 
+
+Thank you for your time, and I look forward to connecting with you! ⭐
+
 # OutPut ScreenShorts :
 <img width="1440" alt="Screenshot 2023-07-17 at 1 35 19 AM" src="https://github.com/siddharthsingh025/RestaurantManagment_API/assets/87073574/f3d33077-2273-4cd7-b860-01b18999c88c">
 <img width="1440" alt="Screenshot 2023-07-17 at 1 14 05 AM" src="https://github.com/siddharthsingh025/RestaurantManagment_API/assets/87073574/3ada7c24-aaa4-4e74-bf29-9bdc696d1782">
@@ -101,19 +139,6 @@
 <img width="1226" alt="Screenshot 2023-07-17 at 2 00 52 AM" src="https://github.com/siddharthsingh025/RestaurantManagment_API/assets/87073574/ef81c1c6-456f-414a-bd69-8cdb1406d4e8">
 <img width="1238" alt="Screenshot 2023-07-17 at 2 00 45 AM" src="https://github.com/siddharthsingh025/RestaurantManagment_API/assets/87073574/6041c281-c96e-40aa-888f-a64f07da16c6">
 <img width="1229" alt="Screenshot 2023-07-17 at 2 00 38 AM" src="https://github.com/siddharthsingh025/RestaurantManagment_API/assets/87073574/bdcbe711-5ce8-42c5-b2a5-c1aa4e2c779e">
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
