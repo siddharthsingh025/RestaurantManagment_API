@@ -1,4 +1,4 @@
-# RestaurantManagment_API
+# RestaurantManagment (API)
 
 - To run this simply run
 
