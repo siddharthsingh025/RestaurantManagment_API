@@ -59,7 +59,7 @@
     - DataBase used : MongoDb - noSQL database 
     - Authentication :JWT
     - Testing : PostMan , TablePlus
-    - Deployment : docker compose , railway cloud 
+    - Deployment : docker compose , can be deployed in any cloud providers
 
 # Testing
       
